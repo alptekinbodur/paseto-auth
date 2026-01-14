@@ -2,7 +2,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Claims {
-    pub sub: String,        // User ID
+    pub user: String,        // User ID
+    pub device: String,        // device ID
     pub exp: i64,           // Unix timestamp (saniye)
     pub iat: i64,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -10,10 +11,11 @@ pub struct Claims {
 }
 
 impl Claims {
-    pub fn new(sub: String, ttl_seconds: u64) -> Self {
+    pub fn new(user: String, device: String, ttl_seconds: u64) -> Self {
         let now = chrono::Utc::now().timestamp();
         Self {
-            sub,
+            user,
+            device,
             iat: now,
             exp: now + ttl_seconds as i64,
             scope: None,

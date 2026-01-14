@@ -13,7 +13,7 @@ categories = ["authentication", "cryptography", "web-programming"]
 [dependencies]
 ed25519-dalek = "2.2"
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.146"
+serde_json = "1.0.149"
 base64 = "0.22.1"
 chrono = { version = "0.4.42", default-features = false, features = ["clock"] }
 hex = "0.4.3"
