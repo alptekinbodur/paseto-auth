@@ -9,8 +9,27 @@ fn b64url_encode(data: &[u8]) -> String {
     URL_SAFE_NO_PAD.encode(data)
 }
 
+// create user token
+pub fn create_token(
+    claims: Claims,
+    private_key: &str,
+    ttl_seconds: u64,
+) -> Result<String, PasetoError> {
+    let sk_bytes: [u8; 32] = hex::decode(private_key)?
+        .try_into()
+        .map_err(|_| PasetoError::InvalidPrivateKey)?;
+
+    let new_claims = Claims::new(
+        claims.user,
+        claims.device,
+        ttl_seconds,
+    );
+
+    create_paseto_v4_public(&new_claims, &sk_bytes)
+}
+
 /// Paseto v4.public generates tokens
-pub fn create_paseto_v4_public(
+fn create_paseto_v4_public(
     claims: &Claims,
     secret_key_bytes: &[u8; 32],
 ) -> Result<String, PasetoError> {
@@ -28,7 +47,19 @@ pub fn create_paseto_v4_public(
     Ok(format!("v4.public.{}.{}.{}", payload_b64, sig_b64, footer_b64))
 }
 
+
+
+
 /// Validates Paseto v4.public token
+pub fn verify_token(token: &str, public_key: &str) -> Result<Claims, PasetoError> {
+    let pk_bytes: [u8; 32] = hex::decode(public_key)
+        .map_err(PasetoError::HexError)?
+        .try_into()
+        .map_err(|_| PasetoError::InvalidPublicKey)?;
+
+    verify_paseto_v4_public(&token, &pk_bytes)
+}
+
 pub fn verify_paseto_v4_public(
     token: &str,
     public_key_bytes: &[u8; 32],

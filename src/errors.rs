@@ -16,4 +16,11 @@ pub enum PasetoError {
     Base64(#[from] base64::DecodeError),
     #[error("Crypto  error: {0}")]
     Crypto(#[from] ed25519_dalek::SignatureError),
+
+    #[error("Hex error: {0}")]
+    HexError(#[from] hex::FromHexError),
+    #[error("Invalid private key")]
+    InvalidPrivateKey,
+    #[error("Invalid public key")]
+    InvalidPublicKey,
 }

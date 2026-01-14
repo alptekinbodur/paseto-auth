@@ -7,5 +7,5 @@ mod token;
 mod errors;
 
 pub use claims::Claims;
-pub use token::{create_paseto_v4_public, verify_paseto_v4_public};
+pub use token::{create_token, verify_token};
 pub use errors::PasetoError;
