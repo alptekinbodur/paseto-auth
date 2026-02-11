@@ -3,7 +3,7 @@ use ed25519_dalek::{SigningKey, VerifyingKey, Signature, Signer, Verifier};
 use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
 use std::convert::TryInto;
 
-const FOOTER: &str = "myapp"; // Global footer – must be the same in all services
+const FOOTER: &str = "travel"; // Global footer – must be the same in all services
 
 fn b64url_encode(data: &[u8]) -> String {
     URL_SAFE_NO_PAD.encode(data)
@@ -21,6 +21,7 @@ pub fn create_token(
 
     let new_claims = Claims::new(
         claims.user,
+        claims.company,
         claims.device,
         ttl_seconds,
     );
@@ -44,11 +45,8 @@ fn create_paseto_v4_public(
     let signature: Signature = signing_key.sign(&message);
     let sig_b64 = b64url_encode(&signature.to_bytes());
 
-    Ok(format!("v4.public.{}.{}.{}", payload_b64, sig_b64, footer_b64))
+    Ok(format!("ab.travel.{}.{}.{}", payload_b64, sig_b64, footer_b64))
 }
-
-
-
 
 /// Validates Paseto v4.public token
 pub fn verify_token(token: &str, public_key: &str) -> Result<Claims, PasetoError> {
@@ -65,7 +63,7 @@ pub fn verify_paseto_v4_public(
     public_key_bytes: &[u8; 32],
 ) -> Result<Claims, PasetoError> {
     let parts: Vec<&str> = token.split('.').collect();
-    if parts.len() != 5 || parts[0] != "v4" || parts[1] != "public" {
+    if parts.len() != 5 || parts[0] != "ab" || parts[1] != "travel" {
         return Err(PasetoError::InvalidFormat);
     }
 
