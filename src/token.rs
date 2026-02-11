@@ -55,7 +55,7 @@ pub fn verify_token(token: &str, public_key: &str) -> Result<Claims, PasetoError
         .try_into()
         .map_err(|_| PasetoError::InvalidPublicKey)?;
 
-    verify_paseto_v4_public(&token, &pk_bytes)
+    verify_paseto_v4_public(token, &pk_bytes)
 }
 
 pub fn verify_paseto_v4_public(
