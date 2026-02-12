@@ -4,28 +4,45 @@ use serde::{Deserialize, Serialize};
 pub struct Claims {
     pub user: String,        // User ID
     pub device: String,        // device ID
-    pub company: String,
+
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub company: Option<String>,     // company id
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub typ: Option<i8>,             // Token Type 0:auth, 1:refresh
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub app: Option<i8>,             // for app 0:mobile, 1:web, 2: backend   
+
     pub exp: i64,           // Unix timestamp (saniye)
     pub iat: i64,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub scope: Option<String>, // Optional
 }
 
 impl Claims {
-    pub fn new(user: String, company: String, device: String, ttl_seconds: u64) -> Self {
+    pub fn new(user: String, device: String, ttl_seconds: u64) -> Self {
         let now = chrono::Utc::now().timestamp();
         Self {
             user,
             device,
-            company,
+
+            company: None,
+            typ: None,
+            app: None,
+
             iat: now,
             exp: now + ttl_seconds as i64,
-            scope: None,
         }
     }
 
-    pub fn with_scope(mut self, scope: String) -> Self {
-        self.scope = Some(scope);
+    pub fn with_company(mut self, company: String) -> Self {
+        self.company = Some(company);
+        self
+    }
+    pub fn with_type(mut self, typ: i8) -> Self {
+        self.typ = Some(typ);
+        self
+    }
+    pub fn with_app(mut self, app: i8) -> Self {
+        self.app = Some(app);
         self
     }
 

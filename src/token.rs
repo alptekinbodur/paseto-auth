@@ -21,7 +21,6 @@ pub fn create_token(
 
     let new_claims = Claims::new(
         claims.user,
-        claims.company,
         claims.device,
         ttl_seconds,
     );
